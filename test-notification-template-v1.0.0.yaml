@@ -10,7 +10,7 @@ metadata:
     - test
     - notification
 spec:
-  owner: user:default/guest
+  owner: user:default/rishabhsvats
   type: service
 
   parameters:
