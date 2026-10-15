@@ -12,3 +12,6 @@ spec:
   type: service
   lifecycle: experimental
   owner: user:default/rishabhsvats
+  scaffoldedFrom:
+    - kind: "Template"
+      name: "test-notification-template"
