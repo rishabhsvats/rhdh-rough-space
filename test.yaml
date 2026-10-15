@@ -16,6 +16,4 @@ spec:
   type: service
   owner: user:default/rishabhsvats
   lifecycle: experimental
-  scaffoldedFrom:
-    - kind: "Template"
-      name: template:default/tracked-service-template
+  scaffoldedFrom: template:default/tracked-service-template
