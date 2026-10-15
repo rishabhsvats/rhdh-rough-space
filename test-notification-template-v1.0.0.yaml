@@ -1,18 +1,16 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: test-notification-template
-  title: Test Notification Template
-  description: Template for testing software template version update notifications
+  name: tracked-service-template
+  title: Tracked Service Template
+  description: A template that tracks its origin and version using custom annotator actions.
   annotations:
-    backstage.io/template-version: "1.0.0"
-  tags:
-    - test
-    - notification
+    # 1. Define the current version of the template itself
+    backstage.io/template-version: "1.0.1" 
 spec:
   owner: user:default/rishabhsvats
   type: service
-
+  
   parameters:
     - title: Component Details
       required:
@@ -21,36 +19,58 @@ spec:
         name:
           title: Name
           type: string
-          description: Unique name for the component
-          pattern: '^[a-z0-9-]+$'
-        description:
-          title: Description
+          description: Unique name for your new component.
+        template_version:
+          title: Template Version
           type: string
-          description: A description for the component
-          default: Test component created from versioned template
+          default: "1.0.1"
+          description: The version of the template being used to create this component.
+
+    - title: Repository Location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
 
   steps:
     - id: fetch-base
-      name: Fetch Base
+      name: Fetch Skeleton
       action: fetch:template
       input:
-        url: https://github.com/backstage/backstage/tree/master/plugins/scaffolder-backend/sample-templates/react-ssr-template/skeleton
+        url: ./skeleton
         values:
           name: ${{ parameters.name }}
-          description: ${{ parameters.description }}
 
-    - id: scaffolded-from
-      name: Record Template Source
+    # 2. Add the scaffolded-from tracking action
+    - id: track-origin
+      name: Track Origin Template
       action: catalog:scaffolded-from
+      # This automatically adds the 'scaffoldedFrom' spec to the generated catalog-info.yaml, 
+      # linking back to this template's entityRef.
+
+    # 3. Add the template version tracking action
+    - id: track-version
+      name: Append Template Version
+      action: catalog:template:version
+      input:
+        annotations:
+          # This stamps the resulting entity with the specific version parameter
+          backstage.io/template-version: ${{ parameters.template_version }}
 
     - id: publish
-      name: Publish to GitHub
+      name: Publish Repository
       action: publish:github
       input:
-        allowedHosts: ['github.com']
-        description: ${{ parameters.description }}
-        repoUrl: github.com?owner=rishabhsvats&repo=${{ parameters.name }}
-        defaultBranch: main
+        allowedHosts:
+          - github.com
+        description: Scaffolded component ${{ parameters.name }}
+        repoUrl: ${{ parameters.repoUrl }}
 
     - id: register
       name: Register Component
@@ -63,6 +83,6 @@ spec:
     links:
       - title: Repository
         url: ${{ steps['publish'].output.remoteUrl }}
-      - title: Open in Catalog
+      - title: Open in catalog
         icon: catalog
         entityRef: ${{ steps['register'].output.entityRef }}
