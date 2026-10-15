@@ -5,7 +5,7 @@ metadata:
   title: Test Notification Template
   description: Updated to version 1.1.0
   annotations:
-    backstage.io/template-version: "1.0.0"
+    backstage.io/template-version: "1.1.0"
   tags:
     - test
 spec:
@@ -14,4 +14,4 @@ spec:
   output:
     text:
       - title: Template Updated
-        content: This template is now at version 1.0.0
+        content: This template is now at version 1.1.0
