@@ -42,8 +42,6 @@ spec:
     - id: scaffolded-from
       name: Record Template Source
       action: catalog:scaffolded-from
-      input:
-        templateRef: template:default/test-notification-template
 
     - id: publish
       name: Publish to GitHub
