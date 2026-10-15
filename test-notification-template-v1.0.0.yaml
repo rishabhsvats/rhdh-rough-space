@@ -5,7 +5,7 @@
     title: Test Notification Template
     description: Template for testing notifications
     annotations:
-      backstage.io/template-version: "1.1.0"
+      backstage.io/template-version: "1.2.0"
     tags:
       - test
   spec:
