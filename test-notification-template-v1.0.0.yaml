@@ -46,6 +46,7 @@ spec:
         url: ./skeleton
         values:
           name: ${{ parameters.name }}
+          repoUrl: ${{ parameters.repoUrl }}
 
     # 2. Add the scaffolded-from tracking action
     - id: track-origin
