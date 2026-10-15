@@ -1,17 +1,9 @@
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: test-notification-component
-  description: Test component for template notifications
-  annotations:
-    backstage.io/template-version: "1.0.0"
-    backstage.io/source-template: template:default/test-notification-template
-  tags:
-    - test
-spec:
-  type: service
-  lifecycle: experimental
-  owner: user:default/rishabhsvats
-  scaffoldedFrom:
-    - kind: "Template"
-      name: "test-notification-template"
+  apiVersion: backstage.io/v1alpha1
+  kind: Component
+  metadata:
+    name: ${{values.name}}
+    description: ${{values.description}}
+  spec:
+    type: service
+    lifecycle: experimental
+    owner: user:default/rishabhsvats
