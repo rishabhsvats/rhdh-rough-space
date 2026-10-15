@@ -11,8 +11,6 @@ metadata:
 spec:
   owner: user:default/rishabhsvats
   type: service
-  parameters: []
-  steps: []
   output:
     text:
       - title: Template Updated
