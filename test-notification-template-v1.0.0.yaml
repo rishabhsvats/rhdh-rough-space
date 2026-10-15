@@ -6,7 +6,7 @@ metadata:
   description: A template that tracks its origin and version using custom annotator actions.
   annotations:
     # 1. Define the current version of the template itself
-    backstage.io/template-version: "1.0.6" 
+    backstage.io/template-version: "1.0.7" 
 spec:
   owner: user:default/rishabhsvats
   type: service
