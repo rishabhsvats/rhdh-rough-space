@@ -10,7 +10,7 @@ metadata:
     - test
     - notification
 spec:
-  owner: user:default/rishabhsvats
+  owner: user:default/guest
   type: service
 
   parameters:
@@ -30,14 +30,23 @@ spec:
           default: Test component created from versioned template
 
   steps:
-    - id: template-version
-      name: Record Template Version
-      action: catalog:template:version
-
     - id: fetch-base
       name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./content
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+        targetPath: ./scaffolded-content
+        replace: false
+        cookiecutterCompat: true
+
+    - id: create-catalog-info
+      name: Create Catalog Info
       action: fetch:plain
       input:
+        targetPath: ./scaffolded-content
         contents:
           - path: catalog-info.yaml
             content: |
@@ -53,11 +62,18 @@ spec:
                 lifecycle: experimental
                 owner: user:default/guest
 
+    - id: template-version
+      name: Record Template Version
+      action: catalog:template:version
+      input:
+        targetPath: ./scaffolded-content
+
     - id: catalog-register
       name: Register Component
       action: catalog:register
       input:
-        catalogInfoUrl: '{{ steps["fetch-base"].output.targetPath }}/catalog-info.yaml'
+        repoContentsUrl: ${{ steps['fetch-base'].output.targetPath }}
+        catalogInfoPath: '/catalog-info.yaml'
 
   output:
     links:
