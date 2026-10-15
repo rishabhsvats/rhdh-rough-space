@@ -1,0 +1,66 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: test-notification-template
+  title: Test Notification Template
+  description: Minimal template for testing software template version update notifications
+  annotations:
+    backstage.io/template-version: "1.0.0"
+  tags:
+    - test
+    - notification
+spec:
+  owner: user:default/guest
+  type: service
+
+  parameters:
+    - title: Component Details
+      required:
+        - name
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name for the component
+          pattern: '^[a-z0-9-]+$'
+        description:
+          title: Description
+          type: string
+          description: A description for the component
+          default: Test component created from versioned template
+
+  steps:
+    - id: template-version
+      name: Record Template Version
+      action: catalog:template:version
+
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:plain
+      input:
+        contents:
+          - path: catalog-info.yaml
+            content: |
+              apiVersion: backstage.io/v1alpha1
+              kind: Component
+              metadata:
+                name: ${{ parameters.name }}
+                description: ${{ parameters.description }}
+                tags:
+                  - test
+              spec:
+                type: service
+                lifecycle: experimental
+                owner: user:default/guest
+
+    - id: catalog-register
+      name: Register Component
+      action: catalog:register
+      input:
+        catalogInfoUrl: '{{ steps["fetch-base"].output.targetPath }}/catalog-info.yaml'
+
+  output:
+    links:
+      - title: Open Component in Catalog
+        icon: catalog
+        entityRef: ${{ steps['catalog-register'].output.entityRef }}
