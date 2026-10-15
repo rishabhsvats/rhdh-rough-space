@@ -3,7 +3,7 @@
   metadata:
     name: test-notification-template
     title: Test Notification Template
-    description: Minimal template for testing notifications
+    description: Template for testing notifications
     annotations:
       backstage.io/template-version: "1.0.0"
     tags:
@@ -11,7 +11,7 @@
   spec:
     owner: user:default/rishabhsvats
     type: service
-
+  
     parameters:
       - title: Component Details
         required:
@@ -26,46 +26,54 @@
             type: string
             default: Test component for notifications
   
+      - title: GitHub Details
+        required:
+          - repoUrl
+        properties:
+          repoUrl:
+            title: Repository Location
+            type: string
+            ui:field: RepoUrlPicker
+            ui:options:
+              allowedHosts:
+                - github.com
+              allowedOwners:
+                - rishabhsvats
+
     steps:
-      - id: template-version-first
-        name: Prepare Version Info
-        action: catalog:template:version
+      - id: fetch
+        name: Fetch Template
+        action: fetch:template
         input:
-          entity:
-            apiVersion: backstage.io/v1alpha1
-            kind: Component
-            metadata:
-              name: ${{ parameters.name }}
-              description: ${{ parameters.description }}
-              tags:
-                - test
-            spec:
-              type: service
-              lifecycle: experimental
-              owner: user:default/rishabhsvats
+          url: https://github.com/backstage/software-templates/tree/main/scaffolder-templates/react-ssr-template/skeleton
+          values:
+            name: ${{ parameters.name }}
+            component_id: ${{ parameters.name }}
+            description: ${{ parameters.description }}
+            owner: user:default/rishabhsvats
+
+      - id: template-version
+        name: Record Template Version
+        action: catalog:template:version
+
+      - id: publish
+        name: Publish to GitHub
+        action: publish:github
+        input:
+          repoUrl: ${{ parameters.repoUrl }}
+          description: ${{ parameters.description }}
 
       - id: register 
         name: Register Component
-        action: catalog:write
+        action: catalog:register
         input:
-          entity:
-            apiVersion: backstage.io/v1alpha1
-            kind: Component
-            metadata:
-              name: ${{ parameters.name }}
-              description: ${{ parameters.description }}
-              annotations:
-                backstage.io/template-version: "1.0.0"
-                backstage.io/source-template: template:default/test-notification-template
-              tags:
-                - test
-            spec:
-              type: service
-              lifecycle: experimental
-              owner: user:default/rishabhsvats
+          repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+          catalogInfoPath: '/catalog-info.yaml'
 
     output: 
       links:
+        - title: Repository
+          url: ${{ steps.publish.output.remoteUrl }}
         - title: Open Component
           icon: catalog
           entityRef: component:default/${{ parameters.name }}
