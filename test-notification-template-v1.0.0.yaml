@@ -68,8 +68,6 @@ spec:
       name: Publish Repository
       action: publish:github
       input:
-        allowedHosts:
-          - github.com
         description: Scaffolded component ${{ parameters.name }}
         repoUrl: ${{ parameters.repoUrl }}
 
