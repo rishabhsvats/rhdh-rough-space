@@ -1,19 +1,54 @@
-apiVersion: scaffolder.backstage.io/v1beta3
-kind: Template
-metadata:
-  name: test-notification-template
-  title: Test Notification Template
-  description: Updated to version 1.1.0
-  annotations:
-    backstage.io/template-version: "1.1.0"
-  tags:
-    - test
-spec:
-  owner: user:default/rishabhsvats
-  type: service
-  parameters: []
-  steps: []
-  output:
-    text:
-      - title: Template Updated
-        content: This template is now at version 1.1.0
+  apiVersion: scaffolder.backstage.io/v1beta3
+  kind: Template
+  metadata:
+    name: test-notification-template
+    title: Test Notification Template
+    description: Minimal working template for notification testing
+    annotations:
+      backstage.io/template-version: "1.0.0"
+    tags:
+      - test
+  spec:
+    owner: user:default/rishabhsvats
+    type: service
+
+    parameters:
+      - title: Component Details
+        required:
+          - name 
+        properties: 
+          name:
+            title: Name
+            type: string
+            pattern: '^[a-z0-9-]+$'
+          description:
+            title: Description
+            type: string
+            default: Test component for notifications
+
+    steps:
+      - id: fetch
+        name: Fetch Skeleton
+        action: fetch:template
+        input:
+          url: https://github.com/rishabhsvats/rhdh-rough-space/tree/main/skeleton
+          values:
+            name: ${{ parameters.name }}
+            description: ${{ parameters.description }}
+  
+      - id: template-version
+        name: Record Template Version
+        action: catalog:template:version
+
+      - id: publish
+        name: Publish to Catalog
+        action: catalog:register
+        input:
+          repoContentsUrl: ${{ steps.fetch.output.targetPath }}
+          catalogInfoPath: '/catalog-info.yaml'
+  
+    output: 
+      links:
+        - title: Open Component
+          icon: catalog
+          entityRef: component:default/${{ parameters.name }}
