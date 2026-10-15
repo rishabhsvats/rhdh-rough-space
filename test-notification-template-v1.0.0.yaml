@@ -3,80 +3,17 @@ kind: Template
 metadata:
   name: test-notification-template
   title: Test Notification Template
-  description: Minimal template for testing software template version update notifications
+  description: Updated to version 1.1.0
   annotations:
-    backstage.io/template-version: "1.0.0"
+    backstage.io/template-version: "1.1.0"
   tags:
     - test
-    - notification
 spec:
   owner: user:default/rishabhsvats
   type: service
-
-  parameters:
-    - title: Component Details
-      required:
-        - name
-      properties:
-        name:
-          title: Name
-          type: string
-          description: Unique name for the component
-          pattern: '^[a-z0-9-]+$'
-        description:
-          title: Description
-          type: string
-          description: A description for the component
-          default: Test component created from versioned template
-
-  steps:
-    - id: fetch-base
-      name: Fetch Base
-      action: fetch:template
-      input:
-        url: ./content
-        values:
-          name: ${{ parameters.name }}
-          description: ${{ parameters.description }}
-        targetPath: ./scaffolded-content
-        replace: false
-        cookiecutterCompat: true
-
-    - id: create-catalog-info
-      name: Create Catalog Info
-      action: fetch:plain
-      input:
-        targetPath: ./scaffolded-content
-        contents:
-          - path: catalog-info.yaml
-            content: |
-              apiVersion: backstage.io/v1alpha1
-              kind: Component
-              metadata:
-                name: ${{ parameters.name }}
-                description: ${{ parameters.description }}
-                tags:
-                  - test
-              spec:
-                type: service
-                lifecycle: experimental
-                owner: user:default/guest
-
-    - id: template-version
-      name: Record Template Version
-      action: catalog:template:version
-      input:
-        targetPath: ./scaffolded-content
-
-    - id: catalog-register
-      name: Register Component
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps['fetch-base'].output.targetPath }}
-        catalogInfoPath: '/catalog-info.yaml'
-
+  parameters: []
+  steps: []
   output:
-    links:
-      - title: Open Component in Catalog
-        icon: catalog
-        entityRef: ${{ steps['catalog-register'].output.entityRef }}
+    text:
+      - title: Template Updated
+        content: This template is now at version 1.1.0
