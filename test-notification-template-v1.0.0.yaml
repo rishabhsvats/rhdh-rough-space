@@ -15,7 +15,7 @@
     parameters:
       - title: Component Details
         required:
-          - name 
+          - name
         properties:
           name:
             title: Name
@@ -27,27 +27,42 @@
             default: Test component for notifications
   
     steps:
-      - id: fetch
-        name: Fetch Template
-        action: fetch:template
-        input:
-          url: https://github.com/backstage/software-templates/tree/main/scaffolder-templates/react-ssr-template/skeleton
-          values:
-            name: ${{ parameters.name }}
-            component_id: ${{ parameters.name }}
-            description: ${{ parameters.description }}
-            owner: user:default/rishabhsvats
-
-      - id: template-version
-        name: Record Template Version
+      - id: template-version-first
+        name: Prepare Version Info
         action: catalog:template:version
+        input:
+          entity:
+            apiVersion: backstage.io/v1alpha1
+            kind: Component
+            metadata:
+              name: ${{ parameters.name }}
+              description: ${{ parameters.description }}
+              tags:
+                - test
+            spec:
+              type: service
+              lifecycle: experimental
+              owner: user:default/rishabhsvats
 
       - id: register 
         name: Register Component
-        action: catalog:register
+        action: catalog:write
         input:
-          repoContentsUrl: ${{ steps.fetch.output.targetPath }}
-          catalogInfoPath: '/catalog-info.yaml'
+          entity:
+            apiVersion: backstage.io/v1alpha1
+            kind: Component
+            metadata:
+              name: ${{ parameters.name }}
+              description: ${{ parameters.description }}
+              annotations:
+                backstage.io/template-version: "1.0.0"
+                backstage.io/source-template: template:default/test-notification-template
+              tags:
+                - test
+            spec:
+              type: service
+              lifecycle: experimental
+              owner: user:default/rishabhsvats
 
     output: 
       links:
