@@ -1,79 +1,70 @@
-  apiVersion: scaffolder.backstage.io/v1beta3
-  kind: Template
-  metadata:
-    name: test-notification-template
-    title: Test Notification Template
-    description: Template for testing notifications
-    annotations:
-      backstage.io/template-version: "1.2.0"
-    tags:
-      - test
-  spec:
-    owner: user:default/rishabhsvats
-    type: service
-  
-    parameters:
-      - title: Component Details
-        required:
-          - name
-        properties:
-          name:
-            title: Name
-            type: string
-            pattern: '^[a-z0-9-]+$'
-          description:
-            title: Description
-            type: string
-            default: Test component for notifications
-  
-      - title: GitHub Details
-        required:
-          - repoUrl
-        properties:
-          repoUrl:
-            title: Repository Location
-            type: string
-            ui:field: RepoUrlPicker
-            ui:options:
-              allowedHosts:
-                - github.com
-              allowedOwners:
-                - rishabhsvats
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: test-notification-template
+  title: Test Notification Template
+  description: Template for testing software template version update notifications
+  annotations:
+    backstage.io/template-version: "1.0.0"
+  tags:
+    - test
+    - notification
+spec:
+  owner: user:default/rishabhsvats
+  type: service
 
-    steps:
-      - id: fetch
-        name: Fetch Template
-        action: fetch:template
-        input:
-          url: https://github.com/backstage/software-templates/tree/main/scaffolder-templates/react-ssr-template/skeleton
-          values:
-            name: ${{ parameters.name }}
-            component_id: ${{ parameters.name }}
-            description: ${{ parameters.description }}
-            owner: user:default/rishabhsvats
+  parameters:
+    - title: Component Details
+      required:
+        - name
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name for the component
+          pattern: '^[a-z0-9-]+$'
+        description:
+          title: Description
+          type: string
+          description: A description for the component
+          default: Test component created from versioned template
 
-      - id: template-version
-        name: Record Template Version
-        action: catalog:template:version
-
-      - id: publish
-        name: Publish to GitHub
-        action: publish:github
-        input:
-          repoUrl: ${{ parameters.repoUrl }}
+  steps:
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: https://github.com/backstage/backstage/tree/master/plugins/scaffolder-backend/sample-templates/react-ssr-template/skeleton
+        values:
+          name: ${{ parameters.name }}
           description: ${{ parameters.description }}
 
-      - id: register 
-        name: Register Component
-        action: catalog:register
-        input:
-          repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-          catalogInfoPath: '/catalog-info.yaml'
+    - id: scaffolded-from
+      name: Record Template Source
+      action: catalog:scaffolded-from
+      input:
+        templateRef: template:default/test-notification-template
 
-    output: 
-      links:
-        - title: Repository
-          url: ${{ steps.publish.output.remoteUrl }}
-        - title: Open Component
-          icon: catalog
-          entityRef: component:default/${{ parameters.name }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: ${{ parameters.description }}
+        repoUrl: github.com?owner=rishabhsvats&repo=${{ parameters.name }}
+        defaultBranch: main
+
+    - id: register
+      name: Register Component
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps['publish'].output.remoteUrl }}
+      - title: Open in Catalog
+        icon: catalog
+        entityRef: ${{ steps['register'].output.entityRef }}
