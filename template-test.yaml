@@ -1,0 +1,21 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: template-version-test
+  title: Template Version Test
+  description: Test
+  tags:
+    - terraform
+    - jokes
+  annotations:
+    backstage.io/template-version: "v2.1.0"
+  links:
+    - title: Documentation
+      url: https://terraform.com
+      icon: docs
+    - title: Source
+      url: https://gitlab.com
+      icon: github
+spec:
+  owner: user:default/guest
+  type: service
