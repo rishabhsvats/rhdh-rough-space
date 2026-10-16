@@ -16,4 +16,4 @@ spec:
   type: service
   owner: user:default/rishabhsvats
   lifecycle: experimental
-  scaffoldedFrom: template:default/tracked-service-template
+  scaffoldedFrom: template:default/template-version-test
