@@ -19,3 +19,4 @@ metadata:
 spec:
   owner: user:default/guest
   type: service
+  steps: []
