@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: test-user
+  name: component-test
   description: Notification Test Downstream
   annotations:
     backstage.io/component-version: "v1.0.1"
