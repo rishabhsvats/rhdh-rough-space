@@ -1,0 +1,22 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: test-user
+  description: Notification Test Downstream
+  annotations:
+    backstage.io/component-version: "v1.0.1"
+  links:
+    - url: https://gitlab.com/xxxx
+      title: Terraform
+      icon: web
+    - url: https://atlassians.net/wiki/spaces/xxxx
+      title: Confluence
+      icon: web
+spec:
+  type: service
+  owner: user:default/guest
+  lifecycle: experimental
+  scaffoldedFrom:
+    - kind: "Template"
+      name: "template-version-test"
+  # scaffoldedFrom: template:default/template-version-test
