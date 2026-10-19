@@ -14,7 +14,7 @@ metadata:
       icon: web
 spec:
   type: service
-  owner: user:development/guest
+  owner: user:default/guest
   lifecycle: experimental
   scaffoldedFrom:
     - kind: "Template"
