@@ -8,7 +8,7 @@ metadata:
     - terraform
     - jokes
   annotations:
-    backstage.io/template-version: "v2.9.0"
+    backstage.io/template-version: "v3.0.0"
   links:
     - title: Documentation
       url: https://terraform.com
